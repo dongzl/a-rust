@@ -6,8 +6,8 @@ use std::collections::LinkedList;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::net::TcpStream;
-use tokio::{task, time};
 use tokio::task::JoinHandle;
+use tokio::{task, time};
 
 pub async fn loop_check(receiver: &Arc<NodePipeLine>) {
     let self_shared = receiver.clone();

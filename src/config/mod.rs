@@ -1,4 +1,3 @@
-
 mod configer;
 mod schema;
 pub mod shortcut;

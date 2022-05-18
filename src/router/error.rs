@@ -42,8 +42,7 @@ impl std::fmt::Display for RouterError {
             }
             RouterError::LookupErrNotInIntegerRange(s) => {
                 write!(f, "RouterError::LookupErrNotInIntegerRange: {}", s)
-            }
-            //ShardRouterError::Other(e) => e.fmt(f),
+            } //ShardRouterError::Other(e) => e.fmt(f),
         }
     }
 }

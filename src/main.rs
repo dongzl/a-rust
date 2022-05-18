@@ -1,14 +1,14 @@
 use std::env;
 use std::error::Error;
 
+mod analyzer;
+mod backend;
+mod config;
 mod frontend;
+mod monitor;
 mod mysql;
 mod proxy;
 mod router;
-mod config;
-mod analyzer;
-mod monitor;
-mod backend;
 
 lazy_static::lazy_static! {
         //1 init global config
@@ -36,8 +36,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
 fn setup_logger() {
     let logger = femme::pretty::Logger::new();
     async_log::Logger::wrap(logger, || /* get the task id here */ 0)
-        .start(GLOBAL_CONFIG
-            .query_log_level()
-            .unwrap_or(log::LevelFilter::Trace))
+        .start(
+            GLOBAL_CONFIG
+                .query_log_level()
+                .unwrap_or(log::LevelFilter::Trace),
+        )
         .unwrap();
 }

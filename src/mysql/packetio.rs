@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 use super::constants::MAX_PAYLOAD_LEN;
+use crate::mysql::errors::{MySQLError, MySQLResult};
 use byteorder::{LittleEndian as LE, WriteBytesExt};
 use std::io::Cursor;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
-use crate::mysql::errors::{MySQLError, MySQLResult};
 
 #[derive(Debug)]
 pub struct PacketIO {

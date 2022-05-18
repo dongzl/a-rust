@@ -1,11 +1,11 @@
-use std::sync::Arc;
-use tokio::sync::Mutex;
-use tokio::task;
 use super::checker::{grow, loop_check};
 use super::inner::InnerLine;
 use crate::backend::conn::P2MConn;
 use crate::backend::error::BackendResult;
 use crate::backend::pool::node_cfg::NodeCfg;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use tokio::task;
 
 #[derive(Debug)]
 pub struct NodePipeLine {

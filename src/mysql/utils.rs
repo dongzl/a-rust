@@ -1,8 +1,8 @@
 use crate::mysql::errors::MySQLResult;
 use byteorder::{ByteOrder, LittleEndian as LE};
 use rand::{thread_rng, Rng};
-use std::sync::atomic::{AtomicU32, Ordering};
 use sha1::Sha1;
+use std::sync::atomic::{AtomicU32, Ordering};
 
 pub fn generate_id() -> u32 {
     static COUNTER: AtomicU32 = AtomicU32::new(1);

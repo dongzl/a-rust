@@ -1,6 +1,6 @@
-use crate::{frontend, router};
 use crate::mysql::{errcode, packet, utils};
 use crate::proxy::errors::{ProxyError, ProxyResult};
+use crate::{frontend, router};
 use std::error::Error;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
@@ -35,7 +35,11 @@ impl ProxyServer {
     }
 }
 
-async fn process<'a>(stream: TcpStream, id: u32, router: Arc<router::Router<'a>>) -> ProxyResult<()> {
+async fn process<'a>(
+    stream: TcpStream,
+    id: u32,
+    router: Arc<router::Router<'a>>,
+) -> ProxyResult<()> {
     log::info!(
         "Server listener: {}, Accepted from: {}, MySQL thread id: {}",
         stream.local_addr()?,

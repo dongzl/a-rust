@@ -1,14 +1,14 @@
 #![allow(dead_code)]
 
-use std::io;
 use crate::frontend::errors::{FrontendError, FrontendResult};
+use crate::mysql::constants::command;
 use crate::mysql::{constants, errors, packet, packetio, utils};
+use crate::router;
 use byteorder::{WriteBytesExt, LE};
+use std::io;
 use std::io::Cursor;
 use std::sync::Arc;
 use tokio::net::TcpStream;
-use crate::mysql::constants::command;
-use crate::router;
 
 //client to proxy conn abstraction
 #[derive(Debug)]
@@ -127,7 +127,8 @@ impl<'a> C2PConn<'a> {
             .ok_or_else(|| {
                 log::info!(
                     "proxy user do not exist: {}, auth:{:?}",
-                    &self.proxy_user, &auth
+                    &self.proxy_user,
+                    &auth
                 );
                 FrontendError::ProxyAuthDenied
             })?;
@@ -179,7 +180,11 @@ impl<'a> C2PConn<'a> {
         self.pkg.reset_seq();
         Ok(())
     }
-    pub async fn build_c2p_conn(tcp: TcpStream, id: u32, r: Arc<router::Router<'a>>) -> FrontendResult<C2PConn<'a>> {
+    pub async fn build_c2p_conn(
+        tcp: TcpStream,
+        id: u32,
+        r: Arc<router::Router<'a>>,
+    ) -> FrontendResult<C2PConn<'a>> {
         let pkg = packetio::PacketIO::new(tcp);
         let conn_id: u32 = id;
         let capability = constants::get_default_capability_flags();
@@ -217,15 +222,15 @@ impl<'a> C2PConn<'a> {
                             exit_flag = true
                         }
                         errors::MySQLError::IO(o)
-                        if o.kind() == io::ErrorKind::ConnectionAborted =>
-                            {
-                                exit_flag = true
-                            }
+                            if o.kind() == io::ErrorKind::ConnectionAborted =>
+                        {
+                            exit_flag = true
+                        }
                         errors::MySQLError::IO(o)
-                        if o.kind() == io::ErrorKind::ConnectionRefused =>
-                            {
-                                exit_flag = true
-                            }
+                            if o.kind() == io::ErrorKind::ConnectionRefused =>
+                        {
+                            exit_flag = true
+                        }
                         errors::MySQLError::IO(o) if o.kind() == io::ErrorKind::NotConnected => {
                             exit_flag = true
                         }
