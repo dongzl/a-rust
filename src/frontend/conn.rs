@@ -8,6 +8,7 @@ use byteorder::{WriteBytesExt, LE};
 use std::io;
 use std::io::Cursor;
 use std::sync::Arc;
+use mysql_common::scramble;
 use tokio::net::TcpStream;
 
 //client to proxy conn abstraction
@@ -70,6 +71,10 @@ impl<'a> C2PConn<'a> {
         //auth-plugin-data-part-2
         data.extend_from_slice(&self.salt[8..]);
         data.push(0u8);
+
+        // let hsp = HandshakePacket::deserialize((), &mut ParseBuf(data.as_mut_slice())).unwrap();
+        // println!("hsf {:?}", hsp);
+
         //server send first auth packet to client by tcp stream
         self.pkg
             .write_packet(&mut data)
@@ -133,7 +138,8 @@ impl<'a> C2PConn<'a> {
                 FrontendError::ProxyAuthDenied
             })?;
         //check user password?
-        let scramble = utils::scramble_password(&self.salt, user_pair.1).unwrap_or_default();
+        let scramble = scramble::scramble_native(&self.salt, user_pair.1.as_bytes()).unwrap_or_default().to_vec();
+        //let _scramble = utils::scramble_password(&self.salt, user_pair.1).unwrap_or_default();
         if scramble != auth {
             log::info!(
                 "proxy user pwd check failed: {}, auth:{:?}",
@@ -275,7 +281,7 @@ impl<'a> C2PConn<'a> {
             self.pkg.reset_seq();
         } //end of loop
     }
-    //write ok packet to clent.
+    //write ok packet to client.
     pub async fn write_ok(&mut self, r: Option<packet::OkPacket>) -> FrontendResult<()> {
         let ok_p = if r.is_none() {
             packet::OkPacket::empty(self.status)
@@ -303,6 +309,10 @@ impl<'a> C2PConn<'a> {
             }
             command::COM_QUERY => {
                 //return c.handleQuery(hack.String(data));
+                self.quit()?;
+                //return Ok(());
+
+                // TODO
             }
             command::COM_PING => {
                 //return c.writeOK(nil);

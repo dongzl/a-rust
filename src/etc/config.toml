@@ -16,7 +16,7 @@
     #proxy user auth.
     users = [
 
-        {user = "root", pwd = "root"},
+        {user = "root", pwd = "root1"},
         {user = "sparrow",pwd = "sparrow"}
 
     ]

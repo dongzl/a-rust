@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::mysql::errors::MySQLResult;
 use byteorder::{ByteOrder, LittleEndian as LE};
 use rand::{thread_rng, Rng};
@@ -46,13 +47,14 @@ pub fn scramble_password(scramble: &[u8], password: &str) -> Option<Vec<u8>> {
     //for (pos, _e) in  conbined_scramble.iter().enumerate() {
     //	combined_scramble[pos] ^= stage1[pos];
     //}
-    let final_scramel: Vec<u8> = combined_scramble
+    let final_scramble: Vec<u8> = combined_scramble
         .iter()
         .enumerate()
         .map(|(pos, e)| e ^ stage1[pos])
         .collect();
-    Some(final_scramel)
+    Some(final_scramble)
 }
+
 // Writes MySql's length-encoded integer.
 pub fn write_length_encoded_int(x: u64) -> Vec<u8> {
     let mut encoded_i: Vec<u8> = Vec::new();

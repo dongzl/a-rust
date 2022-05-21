@@ -30,7 +30,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         COMMIT_ID,
         COMPILE_TIME
     );
-    proxy::ProxyServer::new().run().await
+    proxy::ProxyServer::new().run().await?;
+    Ok(())
 }
 
 fn setup_logger() {

@@ -20,9 +20,7 @@ impl PacketIO {
         }
     }
     pub fn quit(&self) -> MySQLResult<()> {
-        // self.stream
-        //     .shutdown(Shutdown::Both)
-        //     .map_err(|e| MySQLError::IO(e))
+        //self.stream.shutdown();
         Ok(())
     }
 
