@@ -5,3 +5,4 @@ pub mod packet;
 pub mod packetio;
 pub mod sql_state;
 pub mod utils;
+pub mod server;
