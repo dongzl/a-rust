@@ -5,9 +5,9 @@ pub struct Server<T> where T: Listener {
 }
 
 impl <T: Listener>Server<T>  {
-    pub fn new() -> Self {
+    pub fn new(listeners: Vec<T>) -> Self {
         return Server {
-            listeners: Vec::new(),
+            listeners,
         }
     }
 

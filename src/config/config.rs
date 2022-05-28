@@ -3,12 +3,13 @@ use std::error::Error;
 use serde::Deserialize;
 use crate::config::config_model::Configuration;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ConfigOptions {
     pub store_name: String,
     pub options: HashMap<String, String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Center {
     initialize: i32,
     // store_operate: StoreOperate,

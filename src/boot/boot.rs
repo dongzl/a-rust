@@ -1,8 +1,7 @@
 use std::error::Error;
-use mysql_common::frunk::labelled::chars::c;
 use crate::boot::discovery::{Discovery, DiscoveryProvider};
 
-pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<Error>>{
+pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<dyn Error>>{
     let init = provider.init();
     if init.is_some() {
         return init;

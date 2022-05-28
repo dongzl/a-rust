@@ -35,7 +35,7 @@ pub struct Data {
     pub sharding_rule: ShardingRule,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Filter {
     pub name: String,
     pub config: String,

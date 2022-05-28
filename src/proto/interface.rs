@@ -6,7 +6,7 @@ pub trait FilterFactory {
 }
 
 pub trait Listener {
-    fn set_executor(executor: Executor);
+    fn set_executor(executor: Box<dyn Executor>);
 
     fn listen();
 

@@ -49,11 +49,12 @@ pub trait Discovery {
     fn config_center(self) -> Result<Center, Box<dyn Error>>;
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BootOptions {
     pub config: crate::config::ConfigOptions,
 }
 
+#[derive(Debug, Clone)]
 pub struct DiscoveryProvider {
     pub path: String,
     pub options: Option<BootOptions>,
@@ -61,7 +62,7 @@ pub struct DiscoveryProvider {
 }
 
 impl DiscoveryProvider {
-    pub fn new(path: String) -> DiscoveryProvider {
+    pub fn new(path: String) -> Self {
         DiscoveryProvider {
             path,
             options: None,
@@ -189,7 +190,7 @@ impl Discovery for DiscoveryProvider {
             .groups
             .into_iter()
             .find(|g| g.name.eq(&group));
-        let mut result: Vec<String> = Vec::new();
+        let result = Vec::new();
         if group.is_none() {
             return Ok(result);
         }

@@ -14,6 +14,7 @@ mod cmd;
 mod boot;
 mod proto;
 mod server;
+mod executor;
 
 lazy_static::lazy_static! {
         //1 init global config
