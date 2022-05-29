@@ -6,9 +6,9 @@ use crate::mysql::server::Listener;
 use crate::proto::interface::{Executor, FilterFactory};
 use crate::server::server::Server;
 
-pub fn run(config_path: String) {
+pub fn run(config: String) {
     //TODO default config.
-    let provider = DiscoveryProvider::new(config_path);
+    let provider = DiscoveryProvider::new(config);
     let bootstrap = boot::bootstrap(provider.clone());
     if bootstrap.is_some() {
         // TODO log

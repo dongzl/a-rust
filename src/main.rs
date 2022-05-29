@@ -1,5 +1,6 @@
 use std::env;
 use std::error::Error;
+use std::path::PathBuf;
 use crate::cmd::cmds;
 
 mod analyzer;
@@ -69,10 +70,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
         },
         _ => unreachable!("clap should ensure we don't get here"),
     };
-    let config_path = sub_command
-        .value_of_os("c")
-        .map(std::path::PathBuf::from);
+    // let config_path = sub_command
+    //     .value_of_os("c")
+    //     .map(std::path::PathBuf::from);
+
+    let config_path = PathBuf::from("/Users/dongzonglei/source_code/Github/arana-rust/src/conf/bootstrap.yaml");
+
     println!("The config path is: {:?}", config_path);
+
+    println!("The Server start execute start...");
+    cmd::start::run(config_path.as_os_str().to_str().unwrap().to_string());
+    println!("The Server start execute end...");
 
     Ok(())
 }

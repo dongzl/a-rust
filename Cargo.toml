@@ -1,5 +1,5 @@
 [package]
-name = "a-rust"
+name = "arana-rust"
 version = "0.1.0"
 authors = ["Zonglei Dong <dongzonglei@apache.org>"]
 edition = "2021"
