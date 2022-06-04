@@ -5,10 +5,10 @@ use crate::mysql::constants::command;
 use crate::mysql::{constants, errors, packet, packetio, utils};
 use crate::router;
 use byteorder::{WriteBytesExt, LE};
+use mysql_common::scramble;
 use std::io;
 use std::io::Cursor;
 use std::sync::Arc;
-use mysql_common::scramble;
 use tokio::net::TcpStream;
 
 //client to proxy conn abstraction
@@ -138,7 +138,9 @@ impl<'a> C2PConn<'a> {
                 FrontendError::ProxyAuthDenied
             })?;
         //check user password?
-        let scramble = scramble::scramble_native(&self.salt, user_pair.1.as_bytes()).unwrap_or_default().to_vec();
+        let scramble = scramble::scramble_native(&self.salt, user_pair.1.as_bytes())
+            .unwrap_or_default()
+            .to_vec();
         //let _scramble = utils::scramble_password(&self.salt, user_pair.1).unwrap_or_default();
         if scramble != auth {
             log::info!(

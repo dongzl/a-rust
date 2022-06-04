@@ -1,7 +1,7 @@
-use std::error::Error;
 use crate::boot::discovery::{Discovery, DiscoveryProvider};
+use std::error::Error;
 
-pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<dyn Error>>{
+pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<dyn Error>> {
     let init = provider.init();
     if init.is_some() {
         return init;
@@ -19,7 +19,7 @@ pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<dyn Error>>{
         }
     }
 
-   todo!()
+    todo!()
 }
 
 fn build_namespace() {

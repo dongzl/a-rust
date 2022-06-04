@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs::File;
 
-use serde::Deserialize;
 use crate::proto::interface::FilterFactory;
+use serde::Deserialize;
 
 pub enum ProtocolType {
     MySQL(u8),
@@ -20,7 +20,7 @@ pub struct Configuration {
     pub data: Data,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct SocketAddress {
     pub address: String,
     pub port: u32,
@@ -117,14 +117,14 @@ pub struct ShardingRule {
     pub tables: Vec<Table>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Listener {
     pub protocol_type: String,
     pub socket_address: SocketAddress,
     pub server_version: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct User {
     pub username: String,
     pub password: String,

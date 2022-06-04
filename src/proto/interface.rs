@@ -1,5 +1,5 @@
-use std::error::Error;
 use crate::config::Filter;
+use std::error::Error;
 
 pub trait FilterFactory {
     fn new_filter(&self, config: String) -> Result<Filter, Box<dyn Error>>;

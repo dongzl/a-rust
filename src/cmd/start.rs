@@ -1,5 +1,5 @@
-use crate::boot::discovery::{Discovery, DiscoveryProvider};
 use crate::boot::boot;
+use crate::boot::discovery::{Discovery, DiscoveryProvider};
 use crate::config::Filter;
 use crate::executor::redirect::RedirectExecutor;
 use crate::mysql::server::Listener;
@@ -37,7 +37,7 @@ pub fn run(config: String) {
         Err(err) => {
             // TODO log
             return;
-        },
+        }
     };
 
     let mut listeners = Vec::new();

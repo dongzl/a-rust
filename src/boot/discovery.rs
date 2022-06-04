@@ -36,7 +36,12 @@ pub trait Discovery {
     fn list_nodes(&self, cluster: String, group: String) -> Result<Vec<String>, Box<dyn Error>>;
 
     // GetNode returns the node info.
-    fn node(&self, cluster: String, group: String, node: String) -> Result<Option<Node>, Box<dyn Error>>;
+    fn node(
+        &self,
+        cluster: String,
+        group: String,
+        node: String,
+    ) -> Result<Option<Node>, Box<dyn Error>>;
 
     // ListTables lists the table names.
     fn list_tables(&self, cluster: String) -> Result<Vec<String>, Box<dyn Error>>;
@@ -66,7 +71,7 @@ impl DiscoveryProvider {
         DiscoveryProvider {
             path,
             options: None,
-            center: None
+            center: None,
         }
     }
     fn load_boot_options(&mut self) -> Option<Box<dyn Error>> {
@@ -153,7 +158,8 @@ impl Discovery for DiscoveryProvider {
     }
 
     fn list_clusters(&self) -> Result<Vec<String>, Box<dyn Error>> {
-        Ok(self.load()
+        Ok(self
+            .load()
             .data
             .clusters
             .iter()
@@ -177,7 +183,11 @@ impl Discovery for DiscoveryProvider {
             Err(err) => return Err(err),
         };
 
-        Ok(cluster.groups.iter().map(|group| group.name.clone()).collect())
+        Ok(cluster
+            .groups
+            .iter()
+            .map(|group| group.name.clone())
+            .collect())
     }
 
     fn list_nodes(&self, cluster: String, group: String) -> Result<Vec<String>, Box<dyn Error>> {
@@ -186,27 +196,31 @@ impl Discovery for DiscoveryProvider {
             Ok(cluster) => cluster.unwrap(),
             Err(err) => return Err(err),
         };
-        let group: Option<Group> = cluster
-            .groups
-            .into_iter()
-            .find(|g| g.name.eq(&group));
+        let group: Option<Group> = cluster.groups.into_iter().find(|g| g.name.eq(&group));
         let result = Vec::new();
         if group.is_none() {
             return Ok(result);
         }
-        Ok(group.unwrap().nodes.iter().map(|node| node.name.clone()).collect())
+        Ok(group
+            .unwrap()
+            .nodes
+            .iter()
+            .map(|node| node.name.clone())
+            .collect())
     }
 
-    fn node(&self, cluster: String, group: String, node: String) -> Result<Option<Node>, Box<dyn Error>> {
+    fn node(
+        &self,
+        cluster: String,
+        group: String,
+        node: String,
+    ) -> Result<Option<Node>, Box<dyn Error>> {
         let cluster = self.cluster(cluster);
         let cluster = match cluster {
             Ok(cluster) => cluster.unwrap(),
             Err(err) => return Err(err),
         };
-        let group: Option<Group> = cluster
-            .groups
-            .into_iter()
-            .find(|g| g.name.eq(&group));
+        let group: Option<Group> = cluster.groups.into_iter().find(|g| g.name.eq(&group));
         if group.is_none() {
             return Ok(None);
         }

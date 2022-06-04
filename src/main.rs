@@ -1,21 +1,22 @@
+use crate::cmd::cmds;
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
-use crate::cmd::cmds;
 
 mod analyzer;
 mod backend;
+mod boot;
+mod cmd;
 mod config;
+mod executor;
 mod frontend;
 mod monitor;
 mod mysql;
+mod proto;
 mod proxy;
 mod router;
-mod cmd;
-mod boot;
-mod proto;
+mod security;
 mod server;
-mod executor;
 
 lazy_static::lazy_static! {
         //1 init global config
@@ -39,16 +40,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // );
     //proxy::ProxyServer::new().run().await?;
 
-
     let command = cmds::init();
 
-    println!("The sub command size is: {:?}", command.get_subcommands().size_hint());
+    println!(
+        "The sub command size is: {:?}",
+        command.get_subcommands().size_hint()
+    );
 
     let matches = command.get_matches();
     let sub_command = match matches.subcommand() {
         Some(("start", matches)) => {
-            let config_path = matches.value_of_os("c")
-                .map(std::path::PathBuf::from);
+            let config_path = matches.value_of_os("c").map(std::path::PathBuf::from);
 
             match config_path {
                 None => "error",
@@ -56,10 +58,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
             };
 
             matches
-        },
+        }
         Some(("import", matches)) => {
-            let config_path = matches.value_of_os("c")
-                .map(std::path::PathBuf::from);
+            let config_path = matches.value_of_os("c").map(std::path::PathBuf::from);
 
             match config_path {
                 None => "error",
@@ -67,14 +68,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
             };
 
             matches
-        },
+        }
         _ => unreachable!("clap should ensure we don't get here"),
     };
     // let config_path = sub_command
     //     .value_of_os("c")
     //     .map(std::path::PathBuf::from);
 
-    let config_path = PathBuf::from("/Users/dongzonglei/source_code/Github/arana-rust/src/conf/bootstrap.yaml");
+    let config_path =
+        PathBuf::from("/Users/dongzonglei/source_code/Github/arana-rust/src/conf/bootstrap.yaml");
 
     println!("The config path is: {:?}", config_path);
 

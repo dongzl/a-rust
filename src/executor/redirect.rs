@@ -1,15 +1,11 @@
 use crate::proto::interface::Executor;
 
-pub struct RedirectExecutor {
-    
-}
+pub struct RedirectExecutor {}
 
 impl RedirectExecutor {
     pub fn new() -> Self {
-        RedirectExecutor{}
+        RedirectExecutor {}
     }
 }
 
-impl Executor for RedirectExecutor {
-
-}
+impl Executor for RedirectExecutor {}
