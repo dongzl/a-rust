@@ -1,25 +1,42 @@
-use crate::boot::discovery::{Discovery, DiscoveryProvider};
 use std::error::Error;
 
-pub fn bootstrap(mut provider: DiscoveryProvider) -> Option<Box<dyn Error>> {
-    let init = provider.init();
-    if init.is_some() {
-        return init;
-    }
-    let clusters = provider.list_clusters();
-    let clusters = match clusters {
+use crate::boot::discovery::{Discovery, DiscoveryProvider};
+use crate::config::Tenant;
+use crate::security;
+use crate::security::tenant::TenantManager;
+
+pub fn bootstrap(config: String) -> Result<DiscoveryProvider, Box<dyn Error>> {
+    let mut provider = DiscoveryProvider::new(config);
+    match provider.init() {
+        Some(err) => return Err(err),
+        None => {}
+    };
+    let clusters = match provider.list_clusters() {
         Ok(cluster) => cluster,
-        Err(err) => return Some(err),
+        Err(err) => return Err(err),
+    };
+    for cluster in clusters {
+        let _cluster = match provider.cluster(cluster){
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+    }
+    let tenants = match provider.list_tenants() {
+        Ok(tenants) => tenants,
+        Err(err) => return Err(err),
     };
 
-    for cluster in clusters {
-        let cluster = provider.cluster(cluster);
-        if cluster.err().is_some() {
-            continue;
+    for item in tenants {
+        let tenant = match provider.tenant(item.clone()) {
+            Ok(tenant) => tenant,
+            Err(err) => continue,
+        };
+        let tenant_provider = security::TenantManagerProvider::new();
+        for user in tenant.users {
+            tenant_provider.put_user(item.clone(), user);
         }
-    }
-
-    todo!()
+    };
+    Ok(provider)
 }
 
 fn build_namespace() {

@@ -8,12 +8,13 @@ use crate::server::server::Server;
 
 pub fn run(config: String) {
     //TODO default config.
-    let provider = DiscoveryProvider::new(config);
-    let bootstrap = boot::bootstrap(provider.clone());
-    if bootstrap.is_some() {
-        // TODO log
-        return;
-    }
+    let provider = match boot::bootstrap(config) {
+        Ok(provider) => provider,
+        Err(_) => {
+            // TODO log
+            return;
+        }
+    };
     let filters = provider.list_filters();
     if filters.is_err() {
         // TODO log
@@ -43,7 +44,7 @@ pub fn run(config: String) {
     let mut listeners = Vec::new();
     for config in listeners_config {
         let executor = RedirectExecutor::new();
-        let listener = crate::mysql::server::Listener::new(executor, config);
+        let listener = Listener::new(executor, config);
         listeners.push(listener);
     }
     let server = Server::new(listeners);

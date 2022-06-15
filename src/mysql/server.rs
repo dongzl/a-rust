@@ -37,6 +37,23 @@ impl<T: Executor> crate::proto::interface::Listener for Listener<T> {
 
 impl<T: Executor> Listener<T> {
     pub fn new(executor: T, config: crate::config::Listener) -> Self {
-        todo!()
+        let config = ServerConfig {
+            server_version: config.server_version,
+        };
+
+        //TODO Listener
+
+        Listener {
+            config,
+            listener: "".to_string(),
+            executor,
+            conn_id: 0,
+            conn_read_buffer_size: 0,
+            capabilities: 0,
+            character_set: 0,
+            schema_name: "".to_string(),
+            statement_id: 0,
+            stmts: Default::default()
+        }
     }
 }

@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fs::File;
 
 use serde::Deserialize;
+use crate::boot::error::BootstrapError;
 
 use crate::config::{
     Center, Configuration, DataSourceCluster, Filter, Group, Listener, Node, Tenant,
@@ -15,7 +16,7 @@ pub trait Discovery {
     fn list_tenants(&self) -> Result<Vec<String>, Box<dyn Error>>;
 
     // GetTenant returns the tenant info
-    fn tenant(&self, name: String) -> Result<Option<Tenant>, Box<dyn Error>>;
+    fn tenant(&self, name: String) -> Result<Tenant, Box<dyn Error>>;
 
     // ListListeners lists the listener names
     fn list_listeners(&self) -> Result<Vec<Listener>, Box<dyn Error>>;
@@ -27,7 +28,7 @@ pub trait Discovery {
     fn list_clusters(&self) -> Result<Vec<String>, Box<dyn Error>>;
 
     // GetCluster returns the cluster info
-    fn cluster(&self, name: String) -> Result<Option<DataSourceCluster>, Box<dyn Error>>;
+    fn cluster(&self, name: String) -> Result<DataSourceCluster, Box<dyn Error>>;
 
     // ListGroups lists the group names.
     fn list_groups(&self, cluster: String) -> Result<Vec<String>, Box<dyn Error>>;
@@ -115,15 +116,14 @@ impl DiscoveryProvider {
 
 impl Discovery for DiscoveryProvider {
     fn init(&mut self) -> Option<Box<dyn Error>> {
-        let result = self.load_boot_options();
-        if result.is_some() {
-            return result;
+        match self.load_boot_options() {
+            Some(err) => {
+                return Some(err)
+            }
+            None => {
+                self.init_config_center()
+            }
         }
-        let result = self.init_config_center();
-        if result.is_some() {
-            return result;
-        }
-        None
     }
 
     fn list_tenants(&self) -> Result<Vec<String>, Box<dyn Error>> {
@@ -134,13 +134,13 @@ impl Discovery for DiscoveryProvider {
         Ok(tenants)
     }
 
-    fn tenant(&self, name: String) -> Result<Option<Tenant>, Box<dyn Error>> {
+    fn tenant(&self, name: String) -> Result<Tenant, Box<dyn Error>> {
         for each in self.load().data.tenants {
             if each.name == name {
-                return Ok(Some(each));
+                return Ok(each);
             }
         }
-        Ok(None)
+        Err(Box::new(BootstrapError::TenantNotExist(name)))
     }
 
     fn list_listeners(&self) -> Result<Vec<Listener>, Box<dyn Error>> {
@@ -167,19 +167,19 @@ impl Discovery for DiscoveryProvider {
             .collect())
     }
 
-    fn cluster(&self, name: String) -> Result<Option<DataSourceCluster>, Box<dyn Error>> {
+    fn cluster(&self, name: String) -> Result<DataSourceCluster, Box<dyn Error>> {
         for each in self.load().data.clusters {
             if each.name == name {
-                return Ok(Some(each));
+                return Ok(each);
             }
         }
-        Ok(None)
+        Err(Box::new(BootstrapError::DataSourceClusterNotExist(name)))
     }
 
     fn list_groups(&self, cluster: String) -> Result<Vec<String>, Box<dyn Error>> {
         let cluster = self.cluster(cluster);
         let cluster = match cluster {
-            Ok(cluster) => cluster.unwrap(),
+            Ok(cluster) => cluster,
             Err(err) => return Err(err),
         };
 
@@ -193,7 +193,7 @@ impl Discovery for DiscoveryProvider {
     fn list_nodes(&self, cluster: String, group: String) -> Result<Vec<String>, Box<dyn Error>> {
         let cluster = self.cluster(cluster);
         let cluster = match cluster {
-            Ok(cluster) => cluster.unwrap(),
+            Ok(cluster) => cluster,
             Err(err) => return Err(err),
         };
         let group: Option<Group> = cluster.groups.into_iter().find(|g| g.name.eq(&group));
@@ -217,7 +217,7 @@ impl Discovery for DiscoveryProvider {
     ) -> Result<Option<Node>, Box<dyn Error>> {
         let cluster = self.cluster(cluster);
         let cluster = match cluster {
-            Ok(cluster) => cluster.unwrap(),
+            Ok(cluster) => cluster,
             Err(err) => return Err(err),
         };
         let group: Option<Group> = cluster.groups.into_iter().find(|g| g.name.eq(&group));

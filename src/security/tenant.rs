@@ -24,13 +24,21 @@ pub trait TenantManager {
 }
 
 #[derive(Debug, Clone)]
-struct Tenant {
+pub struct Tenant {
     cluster: HashMap<String, String>,
     users: HashMap<String, User>,
 }
 
-struct TenantManagerProvider {
+pub struct TenantManagerProvider {
     tenants: RwLock<HashMap<String, Tenant>>,
+}
+
+impl TenantManagerProvider {
+    pub fn new() -> TenantManagerProvider {
+        TenantManagerProvider {
+            tenants: RwLock::new(HashMap::new()),
+        }
+    }
 }
 
 impl TenantManager for TenantManagerProvider {
