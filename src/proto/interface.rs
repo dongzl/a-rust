@@ -6,11 +6,11 @@ pub trait FilterFactory {
 }
 
 pub trait Listener {
-    fn set_executor(executor: Box<dyn Executor>);
+    fn set_executor(&self, executor: Box<dyn Executor>);
 
-    fn listen();
+    fn listen(&self);
 
-    fn close();
+    fn close(&self);
 }
 
 // Executor
