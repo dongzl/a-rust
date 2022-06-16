@@ -44,7 +44,7 @@ pub fn run(config: String) {
     let mut listeners: Vec<Box<dyn crate::proto::interface::Listener>> = Vec::new();
     for config in listeners_config {
         let executor = RedirectExecutor::new();
-        let listener = Listener::new(config);
+        let listener = Listener::new(executor, config);
         listeners.push(Box::new(listener));
     }
     let server = Server::new(listeners);
